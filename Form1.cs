@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Printing;
+using System.IO;
 using System.Windows.Forms;
- 
+using System.Runtime.InteropServices;
+
 
 namespace ImprimirArchivo
+
 {
+   
     public partial class Form1 : Form
     {
         public Form1()
@@ -13,38 +18,48 @@ namespace ImprimirArchivo
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        
+        private void button3_Click(object sender, EventArgs e)
         {
-            
-         
-
-           /* PrintDialog pd = new PrintDialog();
-            pd.PrinterSettings = new PrinterSettings();
-            pd.PrinterSettings.PrinterName = "doPDF11";
-           */
-            Process printjob = new Process();
-            printjob.StartInfo.FileName = openFileDialog1.FileName;
-            //printjob.StartInfo.Arguments = pd.PrinterSettings.PrinterName;
-            printjob.StartInfo.UseShellExecute = true;
-            printjob.StartInfo.CreateNoWindow = true;
-            printjob.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            printjob.StartInfo.Verb = "Print";
-            printjob.Start();
-
-        }
-
-     
-
-        private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            //Seleccionar Archivo
+            OpenFileDialog ofd = new OpenFileDialog();
+            if (DialogResult.OK == ofd.ShowDialog(this))
             {
-                textBox1.Text = openFileDialog1.FileName;
+                textBox1.Text = ofd.FileName;
+
+                PrintDialog pd = new PrintDialog();
+                pd.PrinterSettings = new PrinterSettings();
+
+                //Enviar archivo a impresora predetermianda
+                RawPrinterHelper.SendFileToPrinter(pd.PrinterSettings.PrinterName, ofd.FileName);
+                     
+                    
+                
+                
+
+                //Seleccionar impresora y enviar archivo
+               /* if (DialogResult.OK == pd.ShowDialog(this))
+                {
+                    // Print the file to the printer.
+                    RawPrinterHelper.SendFileToPrinter(pd.PrinterSettings.PrinterName, ofd.FileName);
+                    
+                }*/
+            }
+        }
+
+
+        // imprimir solo una Cadena 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string s = "Hello"; // device-dependent string, need a FormFeed?
+
+            // Allow the user to select a printer.
+            PrintDialog pd = new PrintDialog();
+            pd.PrinterSettings = new PrinterSettings();
+            if (DialogResult.OK == pd.ShowDialog(this))
+            {
+                // Send a printer-specific to the printer.
+                RawPrinterHelper.SendStringToPrinter(pd.PrinterSettings.PrinterName, s);
             }
         }
     }
